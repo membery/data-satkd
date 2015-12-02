@@ -1,0 +1,214 @@
+{
+	"$schema": "http://json-schema.org/schema#",
+	"id": "uri://registries/competitionPart#",
+	"blocks": {
+		"baseData": {
+			"title": "Základné údaje",
+			"transCode": "schema.competitionPart.baseData",
+			"type": "object",
+			"properties": {
+				"name": {
+					"title": "Názov časti súťaže",
+					"transCode": "schema.competitionPart.name",
+					"type": "string",
+					"required": true
+				},
+				"competition": {
+					"type":"object",
+					"title": "Súťaž",
+					"transCode":"schema.roster.competition",
+					"required": true,
+					"objectLink2": {
+						"schema":"uri://registries/competitions#views/competitions/view",
+						"fields":{
+							"name": "baseData.name"
+						}
+					}
+				},
+				"typeOfCompetition": {
+					"title": "Spôsob žrebovania",
+					"transCode": "schema.competitionPart.typeOfCompetition",
+					"type": "string",
+					"required": true,
+					"enum": [
+						"MANUAL",
+						"BERGER_BASE",
+						"BERGER_SAME_PAIR_TWICE"
+					],
+					"enumTransCodes":[
+						"schema.competitionPart.typeOfCompetition.manual",
+						"schema.competitionPart.typeOfCompetition.berger-base",
+						"schema.competitionPart.typeOfCompetition.berger-same-pair-twice"
+					],
+					"render": {
+						"component": "psui-selectbox",
+						"searchable": true
+					}
+				},
+				"matchIDForNotPlayingTeam": {
+					"extends":"uri://registries/commonenums#blocks/boolean",
+					"title": "Číslovať volný zápas?",
+					"transCode": "schema.competitionPart.matchIDForNotPlayingTeam",
+					"required": true
+				},
+				"matchIDNullBeforeSecondHalf": {
+					"extends":"uri://registries/commonenums#blocks/boolean",
+					"title": "Vynulovať počítadlo zápasov pred odvetnou časťou?",
+					"transCode": "schema.competitionPart.matchIDNullBeforeSecondHalf",
+					"required": true
+				},
+				"prefix": {
+					"title": "Prefix",
+					"transCode": "schema.competitionPart.prefix",
+					"type": "string"
+				},
+				"competitionModel": {
+					"title": "Model súťaže",
+					"transCode": "schema.competitionPart.competitionModel",
+					"type": "string",
+					"enum": [
+						"Model-01",
+						"Model-02",
+						"Model-03",
+						"Model-04"
+
+					],
+					"enumTransCodes":[
+						"schema.competitionPart.competitionModel.model-1",
+						"schema.competitionPart.competitionModel.model-2",
+						"schema.competitionPart.competitionModel.model-3",
+						"schema.competitionPart.competitionModel.model-4"
+					],
+					"render": {
+						"component": "psui-selectbox",
+						"searchable": true
+					}
+				}
+			}
+		},
+		"listOfTeam": {
+			"title": "Zoznam družstiev",
+			"transCode": "schema.competitionPart.listOfTeam",
+			"type": "object",
+			"render": {
+				"width": "full"
+			},
+			"properties": {
+				"team": {
+					"title": "Družstvá",
+					"transCode": "schema.competitionPart.listOfTeam.team",
+					"type": "array",
+					"items": {
+						"team": {
+							"type": "object",
+							"title": "Družstvo",
+							"transCode": "schema.competitionPart.listOfTeam.team",
+							"objectLink2": {
+								"schema":"uri://registries/rosters#views/rosters/view",
+								"fields":{
+									"name": "baseData.prName"
+								},
+								"calculatedCriteria": {
+									"func": "criteriaList",
+									"watch": ["baseData.competition.oid"],
+									"args": [{
+										"func": "criterion",
+										"args": {
+											"f": "baseData.competition.oid",
+											"op": "eq",
+											"v": {
+												"func": "get",
+												"args": {
+													"modelPath": "baseData.competition.oid",
+													"default": null
+												}
+											},
+											"nullIfEmpty": true
+										}
+									}]
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	},
+
+	"models":{
+		"competitionPart":{
+			"title": "Časť súťaže",
+			"transCode": "schema.competitionPart.title",
+			"table": "competitionParts",
+			"security": {
+				"create": {
+					"static": [
+						"CompetitionPart - write"
+					]
+				},
+				"read": {
+					"static": [
+						"CompetitionPart - read"
+					]
+				},
+				"modify": {
+					"static": [
+						"CompetitionPart - write"
+					]
+				}
+			},
+			"properties":{
+				"baseData":{
+					"extends":"uri://registries/competitionPart#blocks/baseData"
+				},
+				"listOfTeam":{
+					"extends":"uri://registries/competitionPart#blocks/listOfTeam"
+				}
+			}
+		}
+	},
+
+	"views":{
+		"competitionPart":{
+			"new":{
+				"extends":"uri://registries/competitionPart#models/competitionPart"
+			},
+			"view":{
+				"extends":"uri://registries/competitionPart#models/competitionPart",
+				"clientActions": [
+					{
+						"__DIRECTIVE__": "generate-action-link",
+						"title": "Generovať zápasy",
+						"schemaFrom": "uri://registries/competitionPart#views/competitionPart/view",
+						"generateBy": "BERGER",
+						"template": "genBerger.html"
+					}
+				]
+			},
+			"search":{
+				"extends":"uri://registries/competitionPart#models/competitionPart",
+				"clientActions": [
+					{
+						"__DIRECTIVE__": "schema-redirect-link",
+						"title": "Zobraziť",
+						"params": {
+							"path": "/registry/view/uri~3A~2F~2Fregistries~2FcompetitionPart~23views~2FcompetitionPart/{{model.id}}"
+						}
+					}
+				],
+				"listFields": [
+					{
+						"field": "baseData.competition",
+						"title": "Súťaž",
+						"transCode": "schema.competitionPart.competition"
+					},
+					{
+						"field": "baseData.name",
+						"title": "Názov časti súťaže",
+						"transCode": "schema.competitionPart.name"
+					}
+				]
+			}
+		}
+	}
+}

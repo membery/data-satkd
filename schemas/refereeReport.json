@@ -1,0 +1,750 @@
+{
+	"$schema": "http://json-schema.org/schema#",
+	"id": "uri://registries/refereeReports#",
+	"blocks": {
+		"baseData": {
+			"title": "Základné údaje",
+			"transCode": "schema.refereeReport.baseData",
+			"type": "object",
+			"properties": {
+				"competition": {
+					"type":"object",
+					"title": "Súťaž",
+					"transCode":"schema.refereeReport.baseData.competition",
+					"required": true,
+					"objectLink2": {
+						"schema":"uri://registries/competitions#views/competitions/view",
+						"fields":{
+							"name": "baseData.name"
+						}
+					}
+				},
+				"season": {
+					"type":"object",
+					"title": "Súťažný ročnik",
+					"transCode":"schema.refereeReport.baseData.season",
+					"required": true,
+					"objectLink2": {
+						"schema":"uri://registries/seasons#views/seasons/view",
+						"fields":{
+							"name": "baseData.name"
+						}
+					}
+				},
+				"competitionPart": {
+					"title": "Časť súťaže",
+					"transCode": "schema.refereeReport.baseData.competitionPart",
+					"type": "object",
+					"required": true,
+					"objectLink2": {
+						"schema":"uri://registries/competitionPart#views/competitionPart/view",
+						"fields":{
+							"name": "baseData.name"
+						},
+						"calculatedCriteria": {
+							"func": "criteriaList",
+							"watch": ["baseData.competition.oid"],
+							"args": [{
+								"func": "criterion",
+								"args": {
+									"f": "baseData.competition.oid",
+									"op": "eq",
+									"v": {
+										"func": "get",
+										"args": {
+											"modelPath": "baseData.competition.oid",
+											"default": null
+										}
+									},
+									"nullIfEmpty": true
+								}
+							}]
+						}
+					}
+				},
+				"ageCategory": {
+					"title": "Veková kategória",
+					"transCode": "schema.refereeReport.baseData.ageCategory",
+					"type": "object",
+					"required": true,
+					"objectLink2": {
+						"schema":"uri://registries/ageCategory#views/ageCategory/view",
+						"fields":{
+							"name": "baseData.name"
+						}
+					}
+				},
+				"homeClub": {
+					"title": "Domáce družstvo",
+					"transCode": "schema.refereeReport.baseData.homeClub",
+					"type": "object",
+					"required": true,
+					"objectLink2": {
+						"schema":"uri://registries/rosters#views/rosters/view",
+						"fields":{
+							"name": "baseData.prName"
+						},
+						"calculatedCriteria": {
+							"func": "criteriaList",
+							"watch": ["baseData.competition.oid"],
+							"args": [{
+								"func": "criterion",
+								"args": {
+									"f": "baseData.competition.oid",
+									"op": "eq",
+									"v": {
+										"func": "get",
+										"args": {
+											"modelPath": "baseData.competition.oid",
+											"default": null
+										}
+									},
+									"nullIfEmpty": true
+								}
+							}]
+						}
+					}
+				},
+				"awayClub": {
+					"title": "Hosťujúce družstvo",
+					"transCode": "schema.refereeReport.baseData.awayClub",
+					"type": "object",
+					"required": true,
+					"objectLink2": {
+						"schema":"uri://registries/rosters#views/rosters/view",
+						"fields":{
+							"name": "baseData.prName"
+						},
+						"calculatedCriteria": {
+							"func": "criteriaList",
+							"watch": ["baseData.competition.oid"],
+							"args": [{
+								"func": "criterion",
+								"args": {
+									"f": "baseData.competition.oid",
+									"op": "eq",
+									"v": {
+										"func": "get",
+										"args": {
+											"modelPath": "baseData.competition.oid",
+											"default": null
+										}
+									},
+									"nullIfEmpty": true
+								}
+							}]
+						}
+					}
+				},
+				"matchRound": {
+					"title": "Kolo",
+					"transCode": "schema.refereeReport.baseData.matchRound",
+					"type": "object",
+					"required": true,
+					"objectLink2": {
+						"schema":"uri://registries/schedule#views/schedule/view",
+						"fields":{
+							"name": "baseData.name"
+						},
+						"calculatedCriteria": {
+							"func": "criteriaList",
+							"watch": ["baseData.competitionPart.oid"],
+							"args": [{
+								"func": "criterion",
+								"args": {
+									"f": "baseData.competitionPart.oid",
+									"op": "eq",
+									"v": {
+										"func": "get",
+										"args": {
+											"modelPath": "baseData.competitionPart.oid",
+											"default": null
+										}
+									},
+									"nullIfEmpty": true
+								}
+							}]
+						}
+					}
+				},
+				"matchDate": {
+					"extends":"uri://registries/commontypes#blocks/date",
+					"title": "Termín stretnutia",
+					"transCode": "schema.refereeReport.baseData.matchDate",
+					"required": true
+				},
+				"matchBegin": {
+					"title": "Začiatok stretnutia",
+					"transCode": "schema.refereeReport.baseData.matchBegin",
+					"type": "string",
+					"required": true
+				},
+				"fullTimeScoreHome": {
+					"title": "Výsledok domáci",
+					"transCode": "schema.refereeReport.baseData.fullTimeScoreHome",
+					"type": "string"
+				},
+				"fullTimeScoreAway": {
+					"title": "Výsledok hostia",
+					"transCode": "schema.refereeReport.baseData.fullTimeScoreAway",
+					"type": "string"
+				},
+				"countOfBalls": {
+					"title": "Počet lôpt",
+					"transCode": "schema.refereeReport.baseData.countOfBalls",
+					"type": "string"
+				},
+				"contumacy": {
+					"extends":"uri://registries/commonenums#blocks/boolean",
+					"title": "Kontumácia",
+					"transCode": "schema.refereeReport.baseData.contumacy"
+				},
+				"attendance": {
+					"title": "Návštevnosť",
+					"transCode": "schema.refereeReport.baseData.attendance",
+					"type": "string"
+				},
+				"stadium": {
+					"title": "Štadion",
+					"transCode": "schema.refereeReport.baseData.stadium",
+					"type": "object",
+					"objectLink2": {
+						"schema":"uri://registries/stadiums#views/stadium/view",
+						"fields":{
+							"name": "baseData.name"
+						}
+					}
+				},
+				"matchNumber": {
+					"title": "Číslo zápasu",
+					"transCode": "schema.refereeReport.baseData.matchNumber",
+					"type": "string"
+				},
+				"state": {
+					"title": "Stav",
+					"transCode": "schema.refereeReport.baseData.state",
+					"type": "string",
+					"required": true,
+					"enum": [
+						"Otvorený",
+						"Zobrazený",
+						"Schválený",
+						"Zatvorený"
+					],
+					"render": {
+						"component": "psui-selectbox",
+						"searchable": true
+					}
+				}
+			}
+		},
+		"delegatedPerson": {
+			"title": "Delegované osoby",
+			"transCode": "schema.refereeReport.delegatedPerson",
+			"type": "object",
+			"properties": {
+				"scorer": {
+					"title": "Zapisovateľ",
+					"transCode": "schema.refereeReport.delegatedPerson.scorer",
+					"type": "object",
+					"objectLink2": {
+						"schema":"uri://registries/people#views/fullperson-km/view",
+						"fields":{
+							"surName": "baseData.surName",
+							"firstName": "baseData.name"
+						}
+					}
+				},
+				"referee1": {
+					"title": "Rozhodca",
+					"transCode": "schema.refereeReport.delegatedPerson.referee",
+					"type": "object",
+					"objectLink2": {
+						"schema":"uri://registries/people#views/fullperson-km/view",
+						"fields":{
+							"surName": "baseData.surName",
+							"firstName": "baseData.name"
+						}
+					}
+				},
+				"referee2": {
+					"title": "Rozhodca",
+					"transCode": "schema.refereeReport.delegatedPerson.referee",
+					"type": "object",
+					"objectLink2": {
+						"schema":"uri://registries/people#views/fullperson-km/view",
+						"fields":{
+							"surName": "baseData.surName",
+							"firstName": "baseData.name"
+						}
+					}
+				},
+				"delegate": {
+					"title": "Delegát",
+					"transCode": "schema.refereeReport.delegatedPerson.delegate",
+					"type": "object",
+					"objectLink2": {
+						"schema":"uri://registries/people#views/fullperson-km/view",
+						"fields":{
+							"surName": "baseData.surName",
+							"firstName": "baseData.name"
+						}
+					}
+				},
+				"supervisor": {
+					"title": "Supervizor",
+					"transCode": "schema.refereeReport.delegatedPerson.supervisor",
+					"type": "string"
+				}
+			}
+		},
+		"officersHome": {
+			"title": "Funkcionári - Domáci",
+			"transCode": "schema.refereeReport.officersHome",
+			"type": "object",
+			"properties": {
+				"officerA": {
+					"title": "A - ZVD",
+					"transCode": "schema.refereeReport.officers.officerA",
+					"type": "object",
+					"objectLink2": {
+						"schema": "uri://registries/people#views/fullperson-km/view",
+						"fields": {
+							"surName": "baseData.surName",
+							"firstName": "baseData.name"
+						}
+					}
+				},
+				"officerB": {
+					"title": "B - Tréner",
+					"transCode": "schema.refereeReport.officers.officerB",
+					"type": "object",
+					"objectLink2": {
+						"schema": "uri://registries/people#views/fullperson-km/view",
+						"fields": {
+							"surName": "baseData.surName",
+							"firstName": "baseData.name"
+						}
+					}
+				},
+				"officerC": {
+					"title": "C - Funkcionár",
+					"transCode": "schema.refereeReport.officers.officerC",
+					"type": "object",
+					"objectLink2": {
+						"schema": "uri://registries/people#views/fullperson-km/view",
+						"fields": {
+							"surName": "baseData.surName",
+							"firstName": "baseData.name"
+						}
+					}
+				},
+				"officerD": {
+					"title": "D - Funkcionár",
+					"transCode": "schema.refereeReport.officers.officerD",
+					"type": "object",
+					"objectLink2": {
+						"schema": "uri://registries/people#views/fullperson-km/view",
+						"fields": {
+							"surName": "baseData.surName",
+							"firstName": "baseData.name"
+						}
+					}
+				}
+			}
+		},
+		"officersGuest": {
+			"title": "Funkcionári - Hostia",
+			"transCode": "schema.refereeReport.officersGuest",
+			"type": "object",
+			"properties": {
+				"officerA": {
+					"title": "A - ZVD",
+					"transCode": "schema.refereeReport.officers.officerA",
+					"type": "object",
+					"objectLink2": {
+						"schema": "uri://registries/people#views/fullperson-km/view",
+						"fields": {
+							"surName": "baseData.surName",
+							"firstName": "baseData.name"
+						}
+					}
+				},
+				"officerB": {
+					"title": "B - Tréner",
+					"transCode": "schema.refereeReport.officers.officerB",
+					"type": "object",
+					"objectLink2": {
+						"schema": "uri://registries/people#views/fullperson-km/view",
+						"fields": {
+							"surName": "baseData.surName",
+							"firstName": "baseData.name"
+						}
+					}
+				},
+				"officerC": {
+					"title": "C - Funkcionár",
+					"transCode": "schema.refereeReport.officers.officerC",
+					"type": "object",
+					"objectLink2": {
+						"schema": "uri://registries/people#views/fullperson-km/view",
+						"fields": {
+							"surName": "baseData.surName",
+							"firstName": "baseData.name"
+						}
+					}
+				},
+				"officerD": {
+					"title": "D - Funkcionár",
+					"transCode": "schema.refereeReport.officers.officerD",
+					"type": "object",
+					"objectLink2": {
+						"schema": "uri://registries/people#views/fullperson-km/view",
+						"fields": {
+							"surName": "baseData.surName",
+							"firstName": "baseData.name"
+						}
+					}
+				}
+			}
+		},
+		"listOfPlayersHome": {
+			"title": "Zoznam hráčov - Domáci",
+			"transCode": "schema.refereeReport.listOfPlayersHome",
+			"type": "object",
+			"render": {
+				"width": "full"
+			},
+			"properties": {
+				"players": {
+					"title": "Hráči",
+					"transCode": "schema.refereeReport.listOfPlayers.players",
+					"type": "array",
+					"items": {
+						"dressNumber": {
+							"title": "Číslo dresu",
+							"transCode": "schema.refereeReport.listOfPlayers.dressNumber",
+							"type": "string"
+						},
+						"player": {
+							"title": "Hráč",
+							"transCode": "schema.refereeReport.listOfPlayers.player",
+							"objectLink2": {
+								"schema": "uri://registries/people#views/player-km/view",
+								"fields": {
+									"surName": "baseData.surName",
+									"firstName": "baseData.name",
+									"registrationID": "baseData.registrationID"
+								}
+							}
+						},
+						"altName": {
+							"title": "Alternatívne meno",
+							"transCode": "schema.refereeReport.listOfPlayers.altName",
+							"type": "string"
+						}
+					}
+				}
+			}
+		},
+		"listOfPlayersGuest": {
+			"title": "Zoznam hráčov - Hostia",
+			"transCode": "schema.refereeReport.listOfPlayersGuest",
+			"type": "object",
+			"render": {
+				"width": "full"
+			},
+			"properties": {
+				"players": {
+					"title": "Hráči",
+					"transCode": "schema.refereeReport.listOfPlayers.players",
+					"type": "array",
+					"items": {
+						"dressNumber": {
+							"title": "Číslo dresu",
+							"transCode": "schema.refereeReport.listOfPlayers.dressNumber",
+							"type": "string"
+						},
+						"player": {
+							"title": "Hráč",
+							"transCode": "schema.refereeReport.listOfPlayers.player",
+							"objectLink2": {
+								"schema": "uri://registries/people#views/player-km/view",
+								"fields": {
+									"surName": "baseData.surName",
+									"firstName": "baseData.name",
+									"registrationID": "baseData.registrationID"
+								}
+							}
+						},
+						"altName": {
+							"title": "Alternatívne meno",
+							"transCode": "schema.refereeReport.listOfPlayers.altName",
+							"type": "string"
+						}
+					}
+				}
+			}
+		}
+	},
+
+	"models": {
+		"refereeReports": {
+			"title": "Zápis rozhodcu",
+			"transCode": "schema.refereeReport.title",
+			"table": "refereeReports",
+			"security": {
+				"create": {
+					"static": [
+						"RefereeReport - write"
+					]
+				},
+				"read": {
+					"static": [
+						"RefereeReport - read"
+					]
+				},
+				"modify": {
+					"static": [
+						"RefereeReport - write"
+					]
+				}
+			},
+			"properties": {
+				"baseData":{
+					"$ref":"uri://registries/refereeReports#blocks/baseData"
+				},
+				"delegatedPerson":{
+					"$ref":"uri://registries/refereeReports#blocks/delegatedPerson"
+				},
+				"officersHome": {
+					"$ref":"uri://registries/refereeReports#blocks/officersHome"
+				},
+				"officersGuest": {
+					"$ref":"uri://registries/refereeReports#blocks/officersGuest"
+				},
+				"listOfPlayersHome":{
+					"$ref":"uri://registries/refereeReports#blocks/listOfPlayersHome"
+				},
+				"listOfPlayersGuest":{
+					"$ref":"uri://registries/refereeReports#blocks/listOfPlayersGuest"
+				}
+			}
+		},
+		"refereeReports-km": {
+			"title": "Zápis rozhodcu",
+			"transCode": "schema.refereeReport.title",
+			"table": "refereeReports",
+			"security": {
+				"create": {
+					"static": [
+						"RefereeReport - write - KM"
+					]
+				},
+				"read": {
+					"static": [
+						"RefereeReport - read - KM"
+					]
+				},
+				"modify": {
+					"static": [
+						"RefereeReport - write - KM"
+					]
+				}
+			},
+			"properties": {
+				"baseData":{
+					"$ref":"uri://registries/refereeReports#blocks/baseData"
+				},
+				"delegatedPerson":{
+					"$ref":"uri://registries/refereeReports#blocks/delegatedPerson"
+				},
+				"officersHome": {
+					"$ref":"uri://registries/refereeReports#blocks/officersHome"
+				},
+				"listOfPlayersHome":{
+					"$ref":"uri://registries/refereeReports#blocks/listOfPlayersHome"
+				},
+				"officersGuest": {
+					"$ref":"uri://registries/refereeReports#blocks/officersGuest"
+				},
+				"listOfPlayersGuest":{
+					"$ref":"uri://registries/refereeReports#blocks/listOfPlayersGuest"
+				}
+			}
+		}
+	},
+
+	"views": {
+		"refereeReports": {
+			"new": {
+				"extends":"uri://registries/refereeReports#models/refereeReports"
+			},
+			"view": {
+				"extends":"uri://registries/refereeReports#models/refereeReports"
+			},
+			"search": {
+				"extends":"uri://registries/refereeReports#models/refereeReports",
+				"clientActions": [
+					{
+						"__DIRECTIVE__": "schema-redirect-link",
+						"title": "Zobraziť",
+						"params": {
+							"path": "/registry/view/uri~3A~2F~2Fregistries~2FrefereeReports~23views~2FrefereeReports/{{model.id}}"
+						}
+					}
+				],
+				"listFields": [
+					{
+						"field": "baseData.matchNumber",
+						"title": "Číslo zápasu",
+						"transCode": "schema.refereeReport.baseData.matchNumber"
+					},
+					{
+						"field": "baseData.homeClub",
+						"title": "Domáce družstvo",
+						"transCode": "schema.refereeReport.listFields.homeClub"
+					},
+					{
+						"field": "baseData.fullTimeScoreHome",
+						"title": ""
+					},
+					{
+						"field": "baseData.fullTimeScoreAway",
+						"title": ""
+					},
+					{
+						"field": "baseData.awayClub",
+						"title": "Hosťujúce družstvo",
+						"transCode": "schema.refereeReport.baseData.awayClub"
+					},
+					{
+						"field": "baseData.matchDate",
+						"title": "Termín stretnutia",
+						"transCode": "schema.refereeReport.baseData.matchDate"
+					},
+					{
+						"field": "baseData.matchRound",
+						"title": "Kolo",
+						"transCode": "schema.refereeReport.baseData.matchRound"
+					}
+				]
+			}
+		},
+		"refereeReports-km": {
+			"new": {
+				"extends":"uri://registries/refereeReports#views/refereeReports-km/view"
+			},
+			"view": {
+				"extends":"uri://registries/refereeReports#models/refereeReports-km",
+				"properties": {
+					"baseData": {
+						"properties": {
+							"competition": {
+								"readOnly": true
+							},
+							"competitionPart": {
+								"readOnly": true
+							},
+							"homeClub": {
+								"readOnly": true
+							},
+							"awayClub": {
+								"readOnly": true
+							},
+							"matchRound": {
+								"readOnly": true
+							},
+							"matchDate": {
+								"readOnly": true
+							},
+							"matchBegin": {
+								"readOnly": true
+							},
+							"fullTimeScoreHome": {
+								"readOnly": true
+							},
+							"fullTimeScoreAway": {
+								"readOnly": true
+							},
+							"halfTimeScoreHome": {
+								"readOnly": true
+							},
+							"halfTimeScoreAway": {
+								"readOnly": true
+							},
+							"attendance": {
+								"readOnly": true
+							},
+							"stadium": {
+								"readOnly": true
+							}
+						}
+					},
+					"delegatedPerson": {
+						"properties": {
+							"referee": {
+								"readOnly": true
+							},
+							"aReferee": {
+								"readOnly": true
+							},
+							"delegate": {
+								"readOnly": true
+							},
+							"state": null,
+							"webNumber": null
+						}
+					}	
+				}
+			},
+			"search": {
+				"extends":"uri://registries/refereeReports#models/refereeReports-km",
+				"clientActions": [
+					{
+						"__DIRECTIVE__": "schema-redirect-link",
+						"title": "Zobraziť",
+						"params": {
+							"path": "/registry/view/uri~3A~2F~2Fregistries~2FrefereeReports~23views~2FrefereeReports-km/{{model.id}}"
+						}
+					}
+				],
+				"listFields": [
+					{
+						"field": "baseData.matchNumber",
+						"title": "Číslo zápasu",
+						"transCode": "schema.refereeReport.baseData.matchNumber"
+					},
+					{
+						"field": "baseData.homeClub",
+						"title": "Domáce družstvo",
+						"transCode": "schema.refereeReport.listFields.homeClub"
+					},
+					{
+						"field": "baseData.fullTimeScoreHome",
+						"title": ""
+					},
+					{
+						"field": "baseData.fullTimeScoreAway",
+						"title": ""
+					},
+					{
+						"field": "baseData.awayClub",
+						"title": "Hosťujúce družstvo",
+						"transCode": "schema.refereeReport.baseData.awayClub"
+					},
+					{
+						"field": "baseData.matchDate",
+						"title": "Termín stretnutia",
+						"transCode": "schema.refereeReport.baseData.matchDate"
+					},
+					{
+						"field": "baseData.matchRound",
+						"title": "Kolo",
+						"transCode": "schema.refereeReport.baseData.matchRound"
+					}
+				]
+			}
+		}
+	}
+}
